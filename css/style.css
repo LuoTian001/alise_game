@@ -1,309 +1,377 @@
-/* =========================================
-   1. 全局重置与基础设置
-   ========================================= */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* 推荐：更符合直觉的盒模型 */
+    /* disable double_tap zoom on mobile devices */
     -ms-touch-action: manipulation;
-    touch-action: manipulation; /* 禁用双击缩放延迟 */
-    cursor: inherit;
+    touch-action: manipulation;
+    /* strange margin-right occurs when vw<500px */
+    /* overflow-x: hidden; */
 }
 
 body {
-    background-color: #87c3ef; /* 蔚蓝档案风格蓝 */
-    font-family: "Resource Han Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* 建议引入圆体 */
-    font-size: 16px; /* 基准字体大小 */
+    background-color: #87c3ef;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Adjusted", "Segoe UI", "Liberation Sans", 'Roboto', sans-serif;
+    font-size: 1.5em;
     color: white;
-    overflow-x: hidden; /* 防止动画滑出产生滚动条 */
-    cursor: url('../arrow.cur'), auto; /* 自定义光标 */
-    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* =========================================
-   2. 背景与容器层级
-   ========================================= */
+*, *::before, *::after {
+  cursor: inherit;
+}
+
+body {
+    cursor: url('./arrow.cur'), auto;
+}
+
 .wrapper {
     position: relative;
-    min-height: 100vh;
-    width: 100%;
-    overflow: hidden;
 }
 
-/* 背景图层 */
 #wrapper-background {
-    position: fixed; /* 使用 fixed 避免页面滚动时背景跟随 */
-    top: 0;
-    left: 0;
+    position: absolute;
     width: 100%;
     height: 100%;
-    background-image: url("../img/arisu1.gif"); /* */
+    background-image: url("/img/hertaa1.gif");
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: 50%;
     background-size: contain;
     z-index: -50;
-    opacity: 0.6; /* 稍微降低背景不透明度，突出前景 */
 }
 
-/* 毛玻璃滤镜层 */
 #wrapper-background-filter {
-    position: fixed;
-    top: 0;
-    left: 0;
+    background-color: #87c3ef;
+    position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(135, 195, 239, 0.65); /* 蔚蓝档案蓝 + 透明度 */
     z-index: -20;
-    backdrop-filter: blur(8px); /* 核心优化：毛玻璃效果 */
-    -webkit-backdrop-filter: blur(8px); /* Safari 兼容 */
 }
 
-/* 内容容器 */
+#loading {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 100px;
+    background-image: url("/img/hertaa1.gif");
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: contain;
+}
+
+.preload {
+    position: absolute;
+    left: 0;
+    top: 0;
+    visibility: hidden;
+}
+
 #content {
-    position: relative;
-    margin: 0 auto;
-    padding-top: 5vh;
-    width: 90%;
-    max-width: 1200px;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 2vh auto;
+    width: 80vw;
 }
 
-/* =========================================
-   3. 文本与排版
-   ========================================= */
+h1 {
+    text-align: center;
+    font-size: 3em;
+    font-weight: bold;
+}
+
+h2 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
 #title-container {
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
 }
 
 #page-title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    text-align: left;
 }
 
 #title-img {
-    height: 3.5rem;
-    width: auto;
-    object-fit: contain;
+    height: 4em;
 }
 
-h2#page-descriptions {
-    font-size: 1.2rem;
-    font-weight: 500;
-    margin-bottom: 2rem;
-    text-align: center;
-    opacity: 0.9;
+#language-selector-container {
+    position: relative;
+    left: 50%;
+    width: 400px;
+    height: fit-content;
+    padding: 10px;
+    align-content: center;
+    transform: translateX(-50%);
 }
 
-/* =========================================
-   4. 计数器与交互核心区域
-   ========================================= */
+#language-selector-placeholder {
+    height: 60px;
+}
+
+#subtitle-seperator {
+    margin-bottom: 10px;
+}
+
 #counter-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 2rem;
-    border-radius: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(4px);
-    margin: 2rem 0;
-    width: 100%;
-    max-width: 500px;
+    text-align: center;
+    font-weight: bold;
+    margin: 64px 0;
 }
 
-#counter-descriptions {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+#counter-container>p {
+    text-shadow: #87c3ef 0 0 10px, #87c3ef 0 0 10px, #87c3ef 0 0 10px, #87c3ef 0 0 10px, #87c3ef 0 0 10px;
 }
 
-.counter-display {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
+#global-counter {
+    color: #574f84;
+    font-size: 2em;
+    line-height: 38px;
 }
 
 #local-counter {
-    font-size: 4rem;
-    font-weight: 900;
-    color: #fff;
-    text-shadow: 2px 2px 0px #53a0d4, 4px 4px 0px rgba(0,0,0,0.1); /* 立体文字效果 */
-    font-family: 'Roboto Mono', monospace; /* 数字建议用等宽字体 */
-    line-height: 1;
+    color: #53a0d4ab;
+    /* font-size: 0.75em; */
+    font-size: 2em;
 }
 
-#counter-unit {
-    font-size: 1.5rem;
-    font-weight: bold;
-    opacity: 0.8;
-}
-
-/* 按钮样式优化 */
 #counter-button {
-    position: relative;
-    background-color: #106ead;
+    background-color: #106eadab;
     border: none;
-    border-radius: 50px; /* 全圆角 */
+    border-radius: 16px;
     color: white;
-    padding: 16px 48px;
-    font-size: 1.25rem;
+    padding: 16px 32px;
+    text-decoration: none;
+    font-size: 1em;
+    font-family: 'Roboto', sans-serif;
     font-weight: bold;
-    cursor: pointer;
-    overflow: hidden; /* 限制波纹溢出 */
-    box-shadow: 0 4px 15px rgba(16, 110, 173, 0.4);
-    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+    margin-top: 16px;
+    min-width: 120px;
+
+    position: relative;
+    overflow: hidden;
+    box-shadow: 6px 7px 40px -4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.1s ease-in-out, scale 0.1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 #counter-button:hover {
     background-color: #2d2463;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(45, 36, 99, 0.5);
 }
 
 #counter-button:active {
-    transform: scale(0.95) translateY(0);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    scale: 0.95;
 }
 
-/* 加载动画 */
-#loading {
-    margin-top: 1rem;
-    width: 48px;
-    height: 48px;
-    background-image: url("../img/arisu1.gif");
-    background-size: contain;
-    background-repeat: no-repeat;
-    animation: spin 2s linear infinite; /* 可选：如果希望它转圈 */
-}
-
-/* =========================================
-   5. 动画特效 (GPU 加速核心)
-   ========================================= */
-
-/* Herta 飞奔动画 */
-@keyframes herta-slide {
-    0% {
-        transform: translateX(100vw) scaleX(-1); /* 从屏幕右侧外开始，镜像翻转(如果素材朝左) */
-        opacity: 0;
-    }
-    10% {
-        opacity: 1;
-    }
-    90% {
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(-100vw) scaleX(-1); /* 飞到屏幕左侧外 */
-        opacity: 0;
-    }
-}
-
-.herta-animation-obj {
-    position: fixed;
-    bottom: 15%; /* 调整垂直位置 */
-    right: 0; /* 初始位置由动画控制，但设定基准 */
-    height: auto;
-    max-height: 300px; /* 限制最大高度 */
-    width: auto;
-    z-index: 100; /* 确保在最顶层 */
-    pointer-events: none; /* 关键：让鼠标点击能穿透图片，不影响连续点击按钮 */
-    will-change: transform; /* 性能优化：通知浏览器分配显存 */
-    animation: herta-slide 2s linear forwards; /* 2秒跑完全程 */
-}
-
-/* 按钮点击波纹特效 */
-.ripple {
+#counter-button span {
     position: absolute;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.5);
-    transform: scale(0);
-    animation: ripple-effect 0.5s linear;
-    pointer-events: none;
+    background-color: #ffffff50;
+
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+
+    animation: ripple 1s;
+    opacity: 0;
 }
 
-@keyframes ripple-effect {
+@keyframes ripple {
+    from {
+        opacity: 1;
+        transform: scale(0);
+    }
+
     to {
-        transform: scale(4);
         opacity: 0;
+        transform: scale(10);
     }
 }
 
-/* =========================================
-   6. 底部 Footer
-   ========================================= */
 #footer {
-    margin-top: auto; /* 推到底部 */
-    padding: 2rem 0;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.9);
-    color: #333;
+    background-color: white;
+    color: black;
+    padding: 16px 10vw;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 30px;
     align-items: center;
-    gap: 2rem;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+    justify-content: center;
 }
 
 #herta-card {
-    width: 280px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
+    min-width: 256px;
+    max-width: 720px;
+    height: auto;
+    border-top-left-radius: 2% 3.5%;
+    border-top-right-radius: 2% 3.5%;
+    border-bottom-left-radius: 2% 3.5%;
+    border-bottom-right-radius: 2% 3.5%;
 }
 
+/* test,由vgwik添加 */
 #herta-card:hover {
-    transform: translateY(-5px);
+    background-color: #ececec;
+    transform: translate3d(-0.5px, -0.5px, 0px);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0.9px 2.5px 0.5px #00000042;
 }
 
-#footer-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.footer-icon {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 2em;
 }
 
-.mdui-list-item {
-    border-radius: 8px;
-    transition: background-color 0.2s;
+#twitter-footer-icon {
+    color: #1d9bf0;
 }
 
-/* =========================================
-   7. 响应式适配 (Mobile Optimized)
-   ========================================= */
-@media screen and (max-width: 768px) {
-    #page-title {
-        font-size: 1.8rem;
+#github-footer-icon {
+    color: #000000;
+}
+
+.footer-icon-text {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: bold;
+    margin-left: 6px;
+}
+
+#footer-repository-text {
+    margin-top: 32px;
+    margin-bottom: 16px;
+}
+
+@media screen and (max-width: 2240px) {
+    .grid-item {
+        width: calc(20% - 10px);
+    }
+}
+
+@media screen and (max-width: 1920px) {
+    .grid-item {
+        width: calc(25% - 10px);
+    }
+}
+
+@media screen and (max-width: 1512px) {
+    body {
+        font-size: 1.25em;
     }
 
-    #counter-container {
-        width: 95%;
-        padding: 1.5rem;
+    #subtitle-seperator {
+        margin-top: 3px;
+        margin-bottom: 11px;
     }
+}
 
-    #local-counter {
-        font-size: 3rem;
-    }
-
-    .herta-animation-obj {
-        max-height: 180px; /* 手机端缩小图片尺寸 */
-        bottom: 20%;
+@media screen and (max-width: 1280px) {
+    .grid-item {
+        width: calc(100% / 3 - 10px);
     }
 
     #footer {
-        flex-direction: column;
-        padding: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    #footer-text {
         text-align: center;
     }
+
+    #footer-header-text {
+        margin-bottom: 8px;
+    }
+
+    #footer-repository-text {
+        margin-top: 16px;
+        margin-bottom: 8px;
+    }
+}
+
+@media screen and (max-width: 1265px) {
+    body {
+        font-size: 1em;
+    }
+
+    #subtitle-seperator {
+        margin-top: 6px;
+        margin-bottom: 12px;
+    }
+}
+
+@media screen and (max-width: 854px) {
+    .grid-item {
+        width: calc(50% - 10px);
+    }
+}
+
+@media screen and (max-width: 510px) {
+    h1 {
+        font-size: 2.5em;
+    }
+
+    h2 {
+        font-size: 1.25em;
+    }
+
+    #subtitle-seperator {
+        margin-top: 8px;
+        margin-bottom: 13px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .grid-item {
+        width: calc(100% - 10px);
+    }
+}
+
+@media screen and (max-width: 430px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    #subtitle-seperator {
+        margin-top: 10px;
+    }
+}
+
+#access-via-mirror,
+#access-via-pages {
+    font-size: small;
+}
+
+#credits-part {
+    width: 100%;
+}
+
+.credits-head-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+
+.about-link {
+    color: black !important;
+}
+
+.mdlist-ava-fix {
+    overflow: hidden !important;
+}
+
+.mdlist-ava-fix img {
+    /* position: absolute; */
+    top: 0px;
+    left: 0px;
+}
+
+td#setting-item-table-td {
+    text-align: right;
+}
+
+td#setting-item-table-td > div.mdui-select {
+    text-align: center;
+    width: 100%;
 }
